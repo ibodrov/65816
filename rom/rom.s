@@ -13,39 +13,32 @@ LCD_DATA = $800001
 
 main:           clc
                 xce                     ;; enable the native mode
-                jsr linit
-main0:          lda #'H'
+                jsr lcdinit
+main0:          ldx #$0
+print:          lda _hello,x
                 jsr lcdprint
-                lda #'e'
-                jsr lcdprint
-                lda #'l'
-                jsr lcdprint
-                lda #'l'
-                jsr lcdprint
-                lda #'o'
-                jsr lcdprint
-                lda #'!'
-                jsr lcdprint
-                nop
-                jsr lcdclear
+                inx
+                cpx #12  
+                bne print                
+                jsr lcdclear              
                 jmp main0
 
 ; *** Wait for LCD busy bit to clear
 ; registers preserved
 lcdbusy:        pha
 lcdbusy0:       lda LCD_INST
-                and #80
+                and #$80
                 bne lcdbusy0
                 pla
                 rts
 
 ; *** LCD initialization
-linit:          ldx #$04
-linit0:         lda #$38
+lcdinit:        ldx #$04
+lcdinit0:       lda #$38
                 sta LCD_INST
                 jsr lcdbusy
                 dex
-                bne linit0
+                bne lcdinit0
                 lda #$06
                 sta LCD_INST
                 jsr lcdbusy
@@ -86,3 +79,5 @@ lcdprint:       pha
                 jsr lcdbusy
 lcdprint0:      pla
                 rts
+
+_hello:         .byte "Hello World!"
