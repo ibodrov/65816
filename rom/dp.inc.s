@@ -1,2 +1,3 @@
 ;; Direct Page "registers"
-LCD_ARG0 = $A0
+.globalzp lcd_arg0
+.globalzp irq_hit

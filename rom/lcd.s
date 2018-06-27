@@ -70,10 +70,10 @@ lcd_print0:     pla
 
 ; *** Prints a null-terminated string on LCD
 ; registers are NOT preserved
-; LCD_ARG0 - address of the string, 16bit
+; lcd_arg0 - address of the string, 16bit
 ; requires .a8
 lcd_prints:     ldy #$0
-lcd_prints0:    lda (LCD_ARG0),Y
+lcd_prints0:    lda (lcd_arg0),Y
                 beq lcd_prints1
                 jsr lcd_print
                 iny

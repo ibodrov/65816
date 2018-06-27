@@ -1,4 +1,4 @@
-SOURCES = lcd.s rom.s
+SOURCES = dp.s lcd.s rom.s
 
 %.o: %.s
 	ca65 -o $@ -l $(@:.o=.lst) $<
