@@ -1,3 +1,6 @@
 *.o
 *.lst
 rom.bin
+*.s#*
+*.b#*
+*.epf

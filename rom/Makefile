@@ -1,4 +1,4 @@
-SOURCES = rom.s
+SOURCES = lcd.s rom.s
 
 %.o: %.s
 	ca65 -o $@ -l $(@:.o=.lst) $<
@@ -10,4 +10,3 @@ rom: $(SOURCES:.s=.o)
 
 clean:
 	rm -f *.o *.lst rom.bin
-
