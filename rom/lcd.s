@@ -1,5 +1,6 @@
                 .setcpu "65816"
 
+                .include "macros.inc.s"
                 .include "dp.inc.s"
 
                 .export lcd_init
@@ -71,14 +72,19 @@ lcd_printc0:    rts
 ; *** Prints a null-terminated string on LCD, max 255 characters
 ; registers are preserved
 ; lcd_arg0 - address of the string, 16bit
-lcd_prints:     pha
+lcd_prints:     php
+                longr
+                pha
                 phy
+                shortr
                 ldy #$0
 lcd_prints0:    lda (lcd_arg0),Y
                 beq lcd_prints1
                 jsr lcd_printc
                 iny
                 jmp lcd_prints0
-lcd_prints1:    ply
+lcd_prints1:    longr
+                ply
                 pla
+                plp
                 rts

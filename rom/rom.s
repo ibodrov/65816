@@ -1,5 +1,6 @@
                 .setcpu "65816"
 
+                .include "macros.inc.s"
                 .include "dp.inc.s"
                 .include "lcd.inc.s"
 
@@ -25,15 +26,14 @@
                 .word   reset           ;; emulation mode RESETB
                 .res    2               ;; emulation mode IRQB
 
+                .smart
+
                 .code
 
-irq:            pha
-                .a16
-                rep #%00100000          ;; use 16-bit accumulator
+irq:            longa
+                pha                
                 lda #_bye
-                sta lcd_arg0            ;; save the pointer to _bye into lcd_arg0
-                .a8
-                sep #%00100000
+                sta lcd_arg0            ;; save the pointer to _bye into lcd_arg0                
                 pla
                 rti
 
@@ -46,12 +46,10 @@ main:           sei                     ;; disable interrupts during init
 
                 jsr lcd_init
 
-                rep #%00100000          ;; use 16-bit accumulator
-                .a16
+                longa
                 lda #_hello
                 sta lcd_arg0            ;; save the pointer to _hello into lcd_arg0
-                .a8
-                sep #%00100000
+                shorta
 
                 cli                     ;; enable interrupts
 
