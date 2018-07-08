@@ -28,8 +28,12 @@
                 .code
 
 irq:            pha
-                lda #'b'
-                sta lcd_arg0
+                .a16
+                rep #%00100000          ;; use 16-bit accumulator
+                lda #_bye
+                sta lcd_arg0            ;; save the pointer to _bye into lcd_arg0
+                .a8
+                sep #%00100000
                 pla
                 rti
 
@@ -41,12 +45,19 @@ main:           sei                     ;; disable interrupts during init
                 xce                     ;; enable the native mode
 
                 jsr lcd_init
-                lda #'a'
-                sta lcd_arg0
+
+                rep #%00100000          ;; use 16-bit accumulator
+                .a16
+                lda #_hello
+                sta lcd_arg0            ;; save the pointer to _hello into lcd_arg0
+                .a8
+                sep #%00100000
 
                 cli                     ;; enable interrupts
 
 main0:          jsr lcd_clear
-                lda lcd_arg0
-                jsr lcd_printc
+                jsr lcd_prints
                 jmp main0
+
+_hello:         .byte "Hello!", $0
+_bye:           .byte "Bye!", $0

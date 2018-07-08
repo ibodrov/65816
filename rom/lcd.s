@@ -13,7 +13,7 @@ _LCD_DATA = $800001
                 .code
 
 ; *** Wait for LCD busy bit to clear
-; registers are preserved
+; registers are preserved (8 bit mode only)
 lcd_busy:       pha
 lcd_busy0:      lda _LCD_INST
                 and #$80
@@ -44,7 +44,7 @@ lcd_init0:      lda #$38
                 rts
 
 ; *** Clear LCD display and return cursor to home
-; registers are preserved
+; registers are preserved (8 bit mode only)
 lcd_clear:      pha
                 lda #$01
                 sta _LCD_INST
@@ -55,10 +55,9 @@ lcd_clear:      pha
                 pla
                 rts
 
-; *** Print a character on LCD (40 character)
-; registers are preserved
-lcd_printc:     pha
-                sta _LCD_DATA
+; *** Print a character on LCD (40 character) stored in A
+; requires 8-bit mode
+lcd_printc:     sta _LCD_DATA
                 jsr lcd_busy
                 lda _LCD_INST
                 and #$7F
@@ -67,17 +66,19 @@ lcd_printc:     pha
                 lda #$C0
                 sta _LCD_INST
                 jsr lcd_busy
-lcd_printc0:    pla
-                rts
+lcd_printc0:    rts
 
-; *** Prints a null-terminated string on LCD
-; registers are NOT preserved
+; *** Prints a null-terminated string on LCD, max 255 characters
+; registers are preserved
 ; lcd_arg0 - address of the string, 16bit
-; requires .a8
-lcd_prints:     ldy #$0
+lcd_prints:     pha
+                phy
+                ldy #$0
 lcd_prints0:    lda (lcd_arg0),Y
                 beq lcd_prints1
                 jsr lcd_printc
                 iny
                 jmp lcd_prints0
-lcd_prints1:    rts
+lcd_prints1:    ply
+                pla
+                rts
